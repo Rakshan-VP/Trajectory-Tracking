@@ -1,22 +1,35 @@
-# Ideal Model
+# Ideal model
 
-This project implements a simple vertical motion control model for a quadcopter.
+This repository demonstrates a **simple 1D vertical control model** for a rotorcraft (quadcopter) assuming:
 
-## Equations
+- No roll/pitch/yaw dynamics.
+- Only vertical (axial) motion.
+- Known trajectory `h(t)` with desired velocity and acceleration.
 
-The vertical dynamics are given by:
+## Controller
+The model assumes perfect dynamics:  
 
-$$ m \ddot{h}(t) = T(t) - mg $$
+$$m \ddot h = T - mg$$
 
-where:
-- \( h(t) \) = altitude
-- \( m \) = mass
-- \( T(t) \) = thrust
-- \( g \) = gravitational acceleration
+We use a **feedforward + feedback** design:
 
-The control law is a combination of feedforward and feedback:
+- **Feedforward** thrust:  
+  $$T_{ff}(t) = m \cdot (g + a_d(t))$$
 
+  where $a_d(t)$ is the desired vertical acceleration.
 
-$$ T(t) = mg + m \ddot{h}_{des}(t) + K_p \big(h_{des}(t) - h(t)\big) + K_d \big(\dot{h}_{des}(t) - \dot{h}(t)\big) $$
+- **Feedback** (PID on height and velocity):  
+  $$a_{fb} = K_p (h_d - h) + K_d (v_d - v) + K_i \int (h_d - h)\, dt$$
 
-a
+- **Total thrust:**  
+  $T^\*(t) = m \cdot \big(g + a_d(t) + a_{fb}\big)$
+
+## Files
+
+- `controller.py` : Python simulation of the system, logs trajectories, and plots results.
+- `README.md` : This file.
+
+## Usage
+
+```bash
+python controller.py
